@@ -95,7 +95,7 @@ class Music(commands.Cog):
         if self.music_queue:
             song = self.music_queue.pop(0)
             self.current_song = song
-            source = discord.FFmpegPCMAudio(song['url'], executable='./ffmpeg.exe')
+            source = discord.FFmpegPCMAudio(song['url'], executable='ffmpeg')
             source = discord.PCMVolumeTransformer(source, volume=self.music_volume)
             ctx.voice_client.play(source, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next(ctx), self.bot.loop))
             await ctx.send(f'🎵 Tocando: {song["title"]}')
