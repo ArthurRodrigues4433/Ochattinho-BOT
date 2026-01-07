@@ -110,7 +110,6 @@ dmypy.json
 .pyre/
 
 # Discord bot specific
-config.py
 TOKEN
 *.token
 
