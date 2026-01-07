@@ -3,3 +3,6 @@ nixPkgs = ["ffmpeg"]
 
 [phases.install]
 cmds = ["pip install -r requirements.txt", "ln -sf $(which ffmpeg) /usr/local/bin/ffmpeg"]
+
+[env]
+PATH = "/usr/local/bin:$PATH"
