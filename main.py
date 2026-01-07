@@ -1,7 +1,7 @@
 import os
 import discord
 from discord.ext import commands
-import config
+import bot_config
 import settings
 import logging
 
@@ -26,5 +26,5 @@ async def on_ready():
             except Exception as e:
                 print(f"Erro ao carregar {filename}: {e}")
 
-assert config.TOKEN is not None, "TOKEN não configurado"
-bot.run(config.TOKEN)
+assert bot_config.TOKEN is not None, "TOKEN não configurado"
+bot.run(bot_config.TOKEN)
