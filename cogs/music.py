@@ -95,17 +95,24 @@ class Music(commands.Cog):
         if self.music_queue:
             song = self.music_queue.pop(0)
             self.current_song = song
-            source = discord.FFmpegPCMAudio(song['url'])
+            source = discord.FFmpegPCMAudio(song['url'], before_options="-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5")
             source = discord.PCMVolumeTransformer(source, volume=self.music_volume)
-            ctx.voice_client.play(source, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next(ctx), self.bot.loop))
+            ctx.voice_client.play(source, after=lambda e: asyncio.run_coroutine_threadsafe(self.song_ended(ctx), self.bot.loop))
             await ctx.send(f'🎵 Tocando: {song["title"]}')
         else:
             self.current_song = None
-            # Agendar saída automática após 30 segundos se não houver música
-            await asyncio.sleep(30)
-            if not ctx.voice_client.is_playing() and not self.music_queue:
-                await ctx.voice_client.disconnect()
-                await ctx.send('Saí do canal de voz pois não há mais músicas.')
+            await self.disconnect_if_idle(ctx)
+
+    async def song_ended(self, ctx):
+        if self.music_queue:
+            await self.play_next(ctx)
+        else:
+            await self.disconnect_if_idle(ctx)
+
+    async def disconnect_if_idle(self, ctx):
+        if ctx.voice_client and not ctx.voice_client.is_playing() and not self.music_queue:
+            await ctx.voice_client.disconnect()
+            await ctx.send('Saí do canal de voz pois não há mais músicas.')
 
     @commands.command()
     async def skip(self, ctx):

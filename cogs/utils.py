@@ -84,6 +84,7 @@ class Utils(commands.Cog):
     async def ajuda(self, ctx):
         embed = discord.Embed(title='🤖 Comandos do Bot', description='Lista de comandos disponíveis')
         embed.add_field(name='🎉 Diversão', value='`!ping`, `!dice`, `!coinflip`, `!meme`', inline=False)
+        embed.add_field(name='🎵 Música', value='`!join`, `!leave`, `!play <música>`, `!skip`, `!pause`, `!resume`, `!queue`, `!volume <0-100>`, `!stop`', inline=False)
         embed.add_field(name='🛠️ Utilitários', value='`!serverinfo`, `!userinfo`, `!avatar`, `!roleinfo`, `!channelinfo`, `!botinfo`, `!uptime`, `!invite`, `!ajuda`', inline=False)
         embed.add_field(name='🛡️ Moderação', value='Apenas para moderadores: `!ban`, `!kick`, `!mute`, `!unmute`, `!clear`, `!warn`', inline=False)
         embed.add_field(name='⚙️ Administração', value='Apenas para administradores: `!setprefix`, `!setlog`, `!setmodrole`, `!reload`, `!shutdown`', inline=False)
