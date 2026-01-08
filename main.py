@@ -4,7 +4,6 @@ from discord.ext import commands
 import bot_config
 import settings
 import logging
-import shutil
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -17,7 +16,6 @@ bot.remove_command('help')
 @bot.event
 async def on_ready():
     print(f'Bot inicializado: {bot.user}')
-    print("FFMPEG:", shutil.which("ffmpeg"))
     # Carregar cogs
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py') and filename != '__init__.py':
