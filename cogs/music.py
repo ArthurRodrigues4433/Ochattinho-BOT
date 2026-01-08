@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import yt_dlp
 import asyncio
-import os
 
 class Music(commands.Cog):
     def __init__(self, bot):
@@ -96,8 +95,7 @@ class Music(commands.Cog):
         if self.music_queue:
             song = self.music_queue.pop(0)
             self.current_song = song
-            executable = os.environ.get('FFMPEG_PATH', 'ffmpeg')
-            source = discord.FFmpegPCMAudio(song['url'], executable=executable)
+            source = discord.FFmpegPCMAudio(song['url'])
             source = discord.PCMVolumeTransformer(source, volume=self.music_volume)
             ctx.voice_client.play(source, after=lambda e: asyncio.run_coroutine_threadsafe(self.play_next(ctx), self.bot.loop))
             await ctx.send(f'🎵 Tocando: {song["title"]}')
