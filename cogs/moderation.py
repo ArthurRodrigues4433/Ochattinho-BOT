@@ -1,14 +1,21 @@
+"""
+Cog para comandos de moderação.
+Inclui comandos para banir, expulsar, silenciar, limpar mensagens e advertir membros.
+"""
+
 import discord
 from discord.ext import commands
 from datetime import timedelta
 import settings
 
 class Mod(commands.Cog):
+    """
+    Classe para comandos de moderação.
+    Requer permissões específicas para cada comando.
+    """
     def __init__(self, bot):
         self.bot = bot
 
-
-    # comando de banir membro
     @commands.command()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member, *, reason=None):
@@ -16,8 +23,6 @@ class Mod(commands.Cog):
         await member.ban(reason=reason)
         await ctx.send(f'{member.mention} foi banido do servidor.')
 
-
-    # comando de expulsar membro
     @commands.command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
@@ -25,11 +30,11 @@ class Mod(commands.Cog):
         await member.kick(reason=reason)
         await ctx.send(f'{member.mention} foi expulso do servidor.')
 
-
-    #comando de silenciar membro
     @commands.command()
     @commands.has_permissions(moderate_members=True)
     async def mute(self, ctx, member: discord.Member, duration: int, unit: str):
+        """Silencia um membro por um período especificado (m: minutos, h: horas, d: dias)."""
+        # Converte a unidade para timedelta
         if unit.lower() == 'm':
             delta = timedelta(minutes=duration)
         elif unit.lower() == 'h':
@@ -41,28 +46,25 @@ class Mod(commands.Cog):
             return
         await member.timeout(delta)
         await ctx.send(f'{member} foi silenciado por {duration}{unit}.')
-    
 
-    # comando de remover silêncio
     @commands.command()
     @commands.has_permissions(moderate_members=True)
     async def unmute(self, ctx, member: discord.Member):
+        """Remove o silêncio de um membro."""
         await member.timeout(None)
         await ctx.send(f'{member} teve o silêncio removido.')
 
-
-    # comando de limpar mensagens
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount: int):
+        """Limpa um número especificado de mensagens do canal."""
         await ctx.channel.purge(limit=amount + 1)  # +1 para incluir o comando
         await ctx.send(f'{amount} mensagens foram deletadas.', delete_after=5)
 
-
-    # comando de advertir membro
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def warn(self, ctx, member: discord.Member, *, reason=None):
+        """Adverte um membro enviando uma DM. Para armazenamento persistente, use um banco de dados."""
         # Aqui você pode armazenar warnings em um banco de dados ou dict
         # Por simplicidade, apenas envia DM
         try:
@@ -73,4 +75,5 @@ class Mod(commands.Cog):
 
 
 async def setup(bot):
+    """Função de configuração para adicionar a cog Mod ao bot."""
     await bot.add_cog(Mod(bot))
