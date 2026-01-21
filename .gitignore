@@ -129,3 +129,6 @@ ffprobe.exe
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+#cookies file
+cookies.txt
