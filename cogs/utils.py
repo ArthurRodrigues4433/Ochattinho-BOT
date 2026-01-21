@@ -82,13 +82,94 @@ class Utils(commands.Cog):
 
     @commands.command()
     async def ajuda(self, ctx):
-        embed = discord.Embed(title='🤖 Comandos do Bot', description='Lista de comandos disponíveis')
-        embed.add_field(name='🎉 Diversão', value='`!ping`, `!dice`, `!coinflip`, `!meme`', inline=False)
-        embed.add_field(name='🎵 Música', value='`!join`, `!leave`, `!play <música>`, `!skip`, `!pause`, `!resume`, `!queue`, `!volume <0-100>`, `!stop`', inline=False)
-        embed.add_field(name='🛠️ Utilitários', value='`!serverinfo`, `!userinfo`, `!avatar`, `!roleinfo`, `!channelinfo`, `!botinfo`, `!uptime`, `!invite`, `!ajuda`', inline=False)
-        embed.add_field(name='🛡️ Moderação', value='Apenas para moderadores: `!ban`, `!kick`, `!mute`, `!unmute`, `!clear`, `!warn`', inline=False)
-        embed.add_field(name='⚙️ Administração', value='Apenas para administradores: `!setprefix`, `!setlog`, `!setmodrole`, `!reload`, `!shutdown`', inline=False)
+        embed = discord.Embed(
+            title='🤖 Central de Comandos — Ochattinho BOT',
+            description=(
+                'Aqui estão todos os comandos disponíveis.\n'
+                'Use o prefixo **!** antes de cada comando.'
+            ),
+            color=discord.Color.blurple()
+        )
+
+        # 🎉 Diversão
+        embed.add_field(
+            name='🎉 Diversão',
+            value=(
+                '**`!ping`** — Mostra o ping do bot\n'
+                '**`!dice`** — Rola um dado aleatório 🎲\n'
+                '**`!coinflip`** — Cara ou coroa 🪙\n'
+                '**`!meme`** — Envia um meme aleatório 😂'
+            ),
+            inline=False
+        )
+
+        # 🎵 Música
+        embed.add_field(
+            name='🎵 Música',
+            value=(
+                '**`!join`** — Entra no canal de voz\n'
+                '**`!leave`** — Sai do canal de voz\n'
+                '**`!play <nome ou link>`** — Toca ou adiciona à fila\n'
+                '**`!skip`** — Pula a música atual ⏭️\n'
+                '**`!pause`** — Pausa a música ⏸️\n'
+                '**`!resume`** — Retoma a música ▶️\n'
+                '**`!queue`** — Mostra a fila de músicas 🎶\n'
+                '**`!volume <0-100>`** — Ajusta o volume 🔊\n'
+                '**`!stop`** — Para tudo e limpa a fila ⏹️'
+            ),
+            inline=False
+        )
+
+        # 🛠️ Utilitários
+        embed.add_field(
+            name='🛠️ Utilitários',
+            value=(
+                '**`!serverinfo`** — Informações do servidor\n'
+                '**`!userinfo`** — Informações de um usuário\n'
+                '**`!avatar`** — Mostra o avatar\n'
+                '**`!roleinfo`** — Informações de um cargo\n'
+                '**`!channelinfo`** — Informações do canal\n'
+                '**`!botinfo`** — Informações do bot\n'
+                '**`!uptime`** — Tempo online ⏱️\n'
+                '**`!invite`** — Link para adicionar o bot\n'
+                '**`!ajuda`** — Mostra esta lista'
+            ),
+            inline=False
+        )
+
+        # 🛡️ Moderação
+        embed.add_field(
+            name='🛡️ Moderação',
+            value=(
+                '⚠️ *Apenas moderadores*\n'
+                '**`!ban`** — Bane um usuário\n'
+                '**`!kick`** — Expulsa um usuário\n'
+                '**`!mute`** — Silencia um usuário\n'
+                '**`!unmute`** — Remove o silêncio\n'
+                '**`!clear`** — Limpa mensagens\n'
+                '**`!warn`** — Aplica um aviso'
+            ),
+            inline=False
+        )
+
+        # ⚙️ Administração
+        embed.add_field(
+            name='⚙️ Administração',
+            value=(
+                '🚫 *Apenas administradores*\n'
+                '**`!setprefix`** — Altera o prefixo\n'
+                '**`!setlog`** — Define canal de logs\n'
+                '**`!setmodrole`** — Define cargo de moderador\n'
+                '**`!reload`** — Recarrega módulos\n'
+                '**`!shutdown`** — Desliga o bot'
+            ),
+            inline=False
+        )
+
+        embed.set_footer(text='💡 Dica: use !ajuda para ver todos os comandos')
+
         await ctx.send(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(Utils(bot))
