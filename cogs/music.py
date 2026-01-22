@@ -4,9 +4,8 @@ import yt_dlp
 import asyncio
 import os
 
-# =========================
+
 # PATH DO COOKIE (ABSOLUTO)
-# =========================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COOKIE_PATH = os.path.join(BASE_DIR, 'cookies.txt')
 
@@ -30,9 +29,8 @@ class Music(commands.Cog):
         self.music_volume = 0.5
         self.queue_lock = asyncio.Lock()
 
-    # =========================
+
     # VOICE
-    # =========================
     @commands.command()
     async def join(self, ctx):
         if ctx.author.voice:
@@ -53,13 +51,13 @@ class Music(commands.Cog):
         else:
             await ctx.send('❌ Não estou em um canal de voz.')
 
-    # =========================
+
+
     # PLAY
-    # =========================
     @commands.command()
     async def play(self, ctx, *, query: str):
         if len(query) > 200:
-            await ctx.send('❌ Query muito longa (máx. 200 caracteres).')
+            await ctx.send('❌ Query muito longa.')
             return
 
         if not ctx.voice_client:
@@ -69,10 +67,9 @@ class Music(commands.Cog):
             'quiet': True,
             'no_warnings': True,
             'cookiefile': COOKIE_PATH,
-            'noplaylist': True,
             'skip_download': True,
             'force_ipv4': True,
-            'extract_flat': False,
+            'extract_flat': True,
         }
 
         try:
@@ -84,19 +81,40 @@ class Music(commands.Cog):
                         search = ydl.extract_info(f'ytsearch:{query}', download=False)
                         info = search['entries'][0] #type: ignore
 
-                    if 'entries' in info:
-                        info = info['entries'][0]
 
-                    audio_url = get_best_audio(info) #type: ignore
-                    title = info.get('title', 'Sem título')
+                    # PLAYLIST
+                    if info.get('_type') == 'playlist':
+                        entries = info.get('entries', [])[:20]
 
-                    song = {
-                        'url': audio_url,
-                        'title': title
-                    }
+                        for entry in entries:
+                            if not entry:
+                                continue
 
-                    self.music_queue.append(song)
-                    await ctx.send(f'🎵 Adicionado à fila: **{title}**')
+                            video_info = ydl.extract_info(
+                                f"https://www.youtube.com/watch?v={entry['id']}",
+                                download=False
+                            )
+
+                            song = {
+                                'url': get_best_audio(video_info), #type: ignore
+                                'title': video_info.get('title', 'Sem título')
+                            }
+
+                            self.music_queue.append(song)
+
+                        await ctx.send(f'📀 Playlist adicionada ({len(entries)} músicas).')
+
+                    # VÍDEO ÚNICO
+                    else:
+                        audio_url = get_best_audio(info) #type: ignore
+                        title = info.get('title', 'Sem título')
+
+                        self.music_queue.append({
+                            'url': audio_url,
+                            'title': title
+                        })
+
+                        await ctx.send(f'🎵 Adicionado à fila: **{title}**')
 
                 if not ctx.voice_client.is_playing():
                     await self.play_next(ctx)
@@ -104,9 +122,8 @@ class Music(commands.Cog):
         except Exception as e:
             await ctx.send(f'❌ Erro ao tocar música: `{e}`')
 
-    # =========================
-    # PLAYER
-    # =========================
+
+    # PLAYER  
     async def play_next(self, ctx):
         if not self.music_queue:
             self.current_song = None
@@ -142,9 +159,7 @@ class Music(commands.Cog):
             await ctx.voice_client.disconnect()
             await ctx.send('⏹️ Saí do canal (fila vazia).')
 
-    # =========================
     # CONTROLES
-    # =========================
     @commands.command()
     async def skip(self, ctx):
         if ctx.voice_client and ctx.voice_client.is_playing():
