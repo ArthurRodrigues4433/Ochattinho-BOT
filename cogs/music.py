@@ -4,23 +4,41 @@ import yt_dlp
 import asyncio
 import os
 
-
+# =========================
 # PATH DO COOKIE (ABSOLUTO)
+# =========================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COOKIE_PATH = os.path.join(BASE_DIR, 'cookies.txt')
 
+MAX_PLAYLIST_ITEMS = 20
 
+
+# =========================
+# HELPERS
+# =========================
 def get_best_audio(info: dict) -> str:
-    """
-    Retorna a melhor URL de áudio disponível para streaming.
-    """
     formats = info.get("formats", [])
     for f in formats:
         if f.get("acodec") != "none" and f.get("url"):
             return f["url"]
-    return info.get("url") #type: ignore
+    return info["url"]
 
 
+def parse_playlist(info: dict):
+    songs = []
+    for entry in info.get("entries", []):
+        if not entry:
+            continue
+        songs.append({
+            "id": entry["id"],
+            "title": entry.get("title", "Sem título")
+        })
+    return songs
+
+
+# =========================
+# COG
+# =========================
 class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -29,15 +47,15 @@ class Music(commands.Cog):
         self.music_volume = 0.5
         self.queue_lock = asyncio.Lock()
 
-
+    # =========================
     # VOICE
+    # =========================
     @commands.command()
     async def join(self, ctx):
         if ctx.author.voice:
-            channel = ctx.author.voice.channel
             if not ctx.voice_client:
-                await channel.connect(self_deaf=True)
-            await ctx.send(f'🎧 Entrei no canal **{channel.name}**')
+                await ctx.author.voice.channel.connect(self_deaf=True)
+            await ctx.send(f'🎧 Entrei no canal **{ctx.author.voice.channel.name}**')
         else:
             await ctx.send('❌ Você precisa estar em um canal de voz.')
 
@@ -51,15 +69,11 @@ class Music(commands.Cog):
         else:
             await ctx.send('❌ Não estou em um canal de voz.')
 
-
-
+    # =========================
     # PLAY
+    # =========================
     @commands.command()
     async def play(self, ctx, *, query: str):
-        if len(query) > 200:
-            await ctx.send('❌ Query muito longa.')
-            return
-
         if not ctx.voice_client:
             await self.join(ctx)
 
@@ -69,72 +83,71 @@ class Music(commands.Cog):
             'cookiefile': COOKIE_PATH,
             'skip_download': True,
             'force_ipv4': True,
-            'extract_flat': True,
+            'extract_flat': 'in_playlist',
+            'playlist_items': f'1-{MAX_PLAYLIST_ITEMS}',
         }
 
         try:
             async with self.queue_lock:
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl: #type: ignore
-                    if 'youtube.com' in query or 'youtu.be' in query:
-                        info = ydl.extract_info(query, download=False)
-                    else:
-                        search = ydl.extract_info(f'ytsearch:{query}', download=False)
-                        info = search['entries'][0] #type: ignore
-
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(
+                        query if 'youtube' in query or 'youtu.be' in query else f'ytsearch:{query}',
+                        download=False
+                    )
 
                     # PLAYLIST
                     if info.get('_type') == 'playlist':
-                        entries = info.get('entries', [])[:20]
+                        songs = parse_playlist(info)
 
-                        for entry in entries:
-                            if not entry:
-                                continue
-
-                            video_info = ydl.extract_info(
-                                f"https://www.youtube.com/watch?v={entry['id']}",
-                                download=False
-                            )
-
-                            song = {
-                                'url': get_best_audio(video_info), #type: ignore
-                                'title': video_info.get('title', 'Sem título')
-                            }
-
+                        for song in songs:
                             self.music_queue.append(song)
 
-                        await ctx.send(f'📀 Playlist adicionada ({len(entries)} músicas).')
+                        await ctx.send(f'📀 Playlist adicionada ({len(songs)} músicas).')
 
-                    # VÍDEO ÚNICO
+                    # SINGLE
                     else:
-                        audio_url = get_best_audio(info) #type: ignore
-                        title = info.get('title', 'Sem título')
-
                         self.music_queue.append({
-                            'url': audio_url,
-                            'title': title
+                            "id": info["id"],
+                            "title": info.get("title", "Sem título")
                         })
+                        await ctx.send(f'🎵 Adicionado: **{info.get("title")}**')
 
-                        await ctx.send(f'🎵 Adicionado à fila: **{title}**')
-
-                if not ctx.voice_client.is_playing():
-                    await self.play_next(ctx)
+            if not ctx.voice_client.is_playing():
+                await self.play_next(ctx)
 
         except Exception as e:
             await ctx.send(f'❌ Erro ao tocar música: `{e}`')
 
-
-    # PLAYER  
+    # =========================
+    # PLAYER
+    # =========================
     async def play_next(self, ctx):
         if not self.music_queue:
             self.current_song = None
-            await self.disconnect_if_idle(ctx)
+            await ctx.voice_client.disconnect()
+            await ctx.send('⏹️ Fila vazia. Saindo do canal.')
             return
 
         song = self.music_queue.pop(0)
         self.current_song = song
 
+        ydl_opts = {
+            'quiet': True,
+            'no_warnings': True,
+            'cookiefile': COOKIE_PATH,
+            'skip_download': True,
+            'force_ipv4': True,
+        }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(
+                f"https://www.youtube.com/watch?v={song['id']}",
+                download=False
+            )
+            audio_url = get_best_audio(info)
+
         source = discord.FFmpegPCMAudio(
-            song['url'],
+            audio_url,
             before_options='-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 -loglevel panic',
             options='-vn'
         )
@@ -143,23 +156,17 @@ class Music(commands.Cog):
 
         ctx.voice_client.play(
             source,
-            after=lambda e: asyncio.run_coroutine_threadsafe(
-                self.song_ended(ctx),
+            after=lambda _: asyncio.run_coroutine_threadsafe(
+                self.play_next(ctx),
                 self.bot.loop
             )
         )
 
         await ctx.send(f'▶️ Tocando agora: **{song["title"]}**')
 
-    async def song_ended(self, ctx):
-        await self.play_next(ctx)
-
-    async def disconnect_if_idle(self, ctx):
-        if ctx.voice_client and not ctx.voice_client.is_playing() and not self.music_queue:
-            await ctx.voice_client.disconnect()
-            await ctx.send('⏹️ Saí do canal (fila vazia).')
-
+    # =========================
     # CONTROLES
+    # =========================
     @commands.command()
     async def skip(self, ctx):
         if ctx.voice_client and ctx.voice_client.is_playing():
@@ -217,5 +224,8 @@ class Music(commands.Cog):
             await ctx.send('❌ Não estou em um canal de voz.')
 
 
+# =========================
+# SETUP
+# =========================
 async def setup(bot):
     await bot.add_cog(Music(bot))
