@@ -18,6 +18,7 @@ class Mod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # FUNÇÃO PARA BANIR UM USUARIO
     @commands.command()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member, *, reason=None):
@@ -25,6 +26,15 @@ class Mod(commands.Cog):
         await member.ban(reason=reason)
         await ctx.send(f"{member.mention} foi banido do servidor.")
 
+    # FUNÇÃO PARA DESBANIR UM USUARIO
+    @commands.command()
+    @commands.has_permissions(ban_members=True)
+    async def unban(self, ctx, member: discord.User, *, reason=None):
+        """Remove o Ban de um membro."""
+        await ctx.guild.unban(member, reason=reason)
+        await ctx.send(f"{member} teve o banimento removido!")
+
+    # FUNÇÃO PARA EXPULSAR UM USUARIO
     @commands.command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
@@ -32,6 +42,7 @@ class Mod(commands.Cog):
         await member.kick(reason=reason)
         await ctx.send(f"{member.mention} foi expulso do servidor.")
 
+    # FUNÇÃO PARA MUTAR
     @commands.command()
     @commands.has_permissions(moderate_members=True)
     async def mute(self, ctx, member: discord.Member, duration: int, unit: str):
@@ -49,6 +60,7 @@ class Mod(commands.Cog):
         await member.timeout(delta)
         await ctx.send(f"{member} foi silenciado por {duration}{unit}.")
 
+    # FUNÇÃO PARA DESMUTAR
     @commands.command()
     @commands.has_permissions(moderate_members=True)
     async def unmute(self, ctx, member: discord.Member):
@@ -56,6 +68,7 @@ class Mod(commands.Cog):
         await member.timeout(None)
         await ctx.send(f"{member} teve o silêncio removido.")
 
+    # FUNÇÃO PARA LIMAPR CONVERSA
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount: int):
@@ -63,6 +76,7 @@ class Mod(commands.Cog):
         await ctx.channel.purge(limit=amount + 1)  # +1 para incluir o comando
         await ctx.send(f"{amount} mensagens foram deletadas.", delete_after=5)
 
+    # FUNÇÃO DE ADIVERTENCIA
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def warn(self, ctx, member: discord.Member, *, reason=None):
