@@ -1,6 +1,6 @@
 # Ochattinho BOT
 
-![alt text](image-1.png)
+![Bot Discord](image.png)
 
 Um bot Discord multifuncional escrito em Python usando discord.py, com comandos de diversão, moderação, administração, música e utilitários.
 
