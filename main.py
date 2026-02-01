@@ -9,6 +9,7 @@ from discord.ext import commands
 import bot_config
 import settings
 import logging
+import debug
 
 # Configuração do logging para registrar eventos do bot
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -40,4 +41,5 @@ async def on_ready():
 
 # Verifica se o token do bot está configurado antes de executar
 assert bot_config.TOKEN is not None, "TOKEN não configurado"
+debug.setup_debug_handlers(bot)
 bot.run(bot_config.TOKEN)
