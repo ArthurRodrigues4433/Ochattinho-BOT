@@ -111,7 +111,7 @@ class Utils(commands.Cog):
             title="🤖 Central de Comandos — Ochattinho BOT",
             description=(
                 "Aqui estão todos os comandos disponíveis.\n"
-                "Use o prefixo **!** antes de cada comando."
+                "Use o prefixo **oc!** antes de cada comando."
             ),
             color=discord.Color.blurple(),
         )
@@ -120,10 +120,10 @@ class Utils(commands.Cog):
         embed.add_field(
             name="🎉 Diversão",
             value=(
-                "**`!ping`** — Mostra o ping do bot\n"
-                "**`!dice`** — Rola um dado aleatório 🎲\n"
-                "**`!coinflip`** — Cara ou coroa 🪙\n"
-                "**`!meme`** — Envia um meme aleatório 😂"
+                "**`oc!ping`** — Mostra o ping do bot\n"
+                "**`oc!dice`** — Rola um dado aleatório 🎲\n"
+                "**`oc!coinflip`** — Cara ou coroa 🪙\n"
+                "**`oc!meme`** — Envia um meme aleatório 😂"
             ),
             inline=False,
         )
@@ -132,15 +132,15 @@ class Utils(commands.Cog):
         embed.add_field(
             name="🎵 Música",
             value=(
-                "**`!join`** — Entra no canal de voz\n"
-                "**`!leave`** — Sai do canal de voz\n"
-                "**`!play <nome ou link>`** — Toca ou adiciona à fila\n"
-                "**`!skip`** — Pula a música atual ⏭️\n"
-                "**`!pause`** — Pausa a música ⏸️\n"
-                "**`!resume`** — Retoma a música ▶️\n"
-                "**`!queue`** — Mostra a fila de músicas 🎶\n"
-                "**`!volume <0-100>`** — Ajusta o volume 🔊\n"
-                "**`!stop`** — Para tudo e limpa a fila ⏹️"
+                "**`oc!join`** — Entra no canal de voz\n"
+                "**`oc!leave`** — Sai do canal de voz\n"
+                "**`oc!play <nome ou link>`** — Toca ou adiciona à fila\n"
+                "**`oc!skip`** — Pula a música atual ⏭️\n"
+                "**`oc!pause`** — Pausa a música ⏸️\n"
+                "**`oc!resume`** — Retoma a música ▶️\n"
+                "**`oc!queue`** — Mostra a fila de músicas 🎶\n"
+                "**`oc!volume <0-100>`** — Ajusta o volume 🔊\n"
+                "**`oc!stop`** — Para tudo e limpa a fila ⏹️"
             ),
             inline=False,
         )
@@ -149,15 +149,15 @@ class Utils(commands.Cog):
         embed.add_field(
             name="🛠️ Utilitários",
             value=(
-                "**`!serverinfo`** — Informações do servidor\n"
-                "**`!userinfo`** — Informações de um usuário\n"
-                "**`!avatar`** — Mostra o avatar\n"
-                "**`!roleinfo`** — Informações de um cargo\n"
-                "**`!channelinfo`** — Informações do canal\n"
-                "**`!botinfo`** — Informações do bot\n"
-                "**`!uptime`** — Tempo online ⏱️\n"
-                "**`!invite`** — Link para adicionar o bot\n"
-                "**`!ajuda`** — Mostra esta lista"
+                "**`oc!serverinfo`** — Informações do servidor\n"
+                "**`oc!userinfo`** — Informações de um usuário\n"
+                "**`oc!avatar`** — Mostra o avatar\n"
+                "**`oc!roleinfo`** — Informações de um cargo\n"
+                "**`oc!channelinfo`** — Informações do canal\n"
+                "**`oc!botinfo`** — Informações do bot\n"
+                "**`oc!uptime`** — Tempo online ⏱️\n"
+                "**`oc!invite`** — Link para adicionar o bot\n"
+                "**`oc!ajuda`** — Mostra esta lista"
             ),
             inline=False,
         )
@@ -167,12 +167,12 @@ class Utils(commands.Cog):
             name="🛡️ Moderação",
             value=(
                 "⚠️ *Apenas moderadores*\n"
-                "**`!ban`** — Bane um usuário\n"
-                "**`!kick`** — Expulsa um usuário\n"
-                "**`!mute`** — Silencia um usuário\n"
-                "**`!unmute`** — Remove o silêncio\n"
-                "**`!clear`** — Limpa mensagens\n"
-                "**`!warn`** — Aplica um aviso"
+                "**`oc!ban`** — Bane um usuário\n"
+                "**`oc!kick`** — Expulsa um usuário\n"
+                "**`oc!mute`** — Silencia um usuário\n"
+                "**`oc!unmute`** — Remove o silêncio\n"
+                "**`oc!clear`** — Limpa mensagens\n"
+                "**`oc!warn`** — Aplica um aviso"
             ),
             inline=False,
         )
@@ -182,11 +182,11 @@ class Utils(commands.Cog):
             name="⚙️ Administração",
             value=(
                 "🚫 *Apenas administradores*\n"
-                "**`!setprefix`** — Altera o prefixo\n"
-                "**`!setlog`** — Define canal de logs\n"
-                "**`!setmodrole`** — Define cargo de moderador\n"
-                "**`!reload`** — Recarrega módulos\n"
-                "**`!shutdown`** — Desliga o bot"
+                "**`oc!setprefix`** — Altera o prefixo\n"
+                "**`oc!setlog`** — Define canal de logs\n"
+                "**`oc!setmodrole`** — Define cargo de moderador\n"
+                "**`oc!reload`** — Recarrega módulos\n"
+                "**`oc!shutdown`** — Desliga o bot"
             ),
             inline=False,
         )
