@@ -76,6 +76,19 @@ async def on_guild_join(guild):
     else:
         print(f"[INFO] Bot entrou com sucesso em {guild.name}!")
 
+        # Envia mensagem de boas-vindas no primeiro canal disponível
+        for channel in guild.text_channels:
+            if channel.permissions_for(guild.me).send_messages:
+                try:
+                    await channel.send(
+                        f"🎉 Olá! Eu sou o **Ochattinho BOT**!\n"
+                        f"Estou pronto para ajudar em **{guild.name}**.\n"
+                        f"Use `oc!ajuda` para ver meus comandos!"
+                    )
+                    break
+                except:
+                    pass
+
         # Verifica hierarquia se entrou com permissões OK
         bot_role = guild.me.top_role
         highest_role = max(guild.roles, key=lambda r: r.position)
