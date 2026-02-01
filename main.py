@@ -12,15 +12,76 @@ import logging
 import debug
 
 # Configuração do logging para registrar eventos do bot
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 # Função para obter o prefixo do comando baseado no servidor (guild)
 def get_prefix(bot, message):
-    return settings.PREFIXES.get(message.guild.id if message.guild else None, '!')
+    return settings.PREFIXES.get(message.guild.id if message.guild else None, "oc!")
+
 
 # Inicialização do bot com prefixo dinâmico e todas as intents habilitadas
 bot = commands.Bot(command_prefix=get_prefix, intents=discord.Intents.all())
-bot.remove_command('help')  # Remove o comando de ajuda padrão para implementar um customizado
+bot.remove_command(
+    "help"
+)  # Remove o comando de ajuda padrão para implementar um customizado
+
+
+@bot.event
+async def on_guild_join(guild):
+    """Evento chamado quando o bot entra em um servidor."""
+    required_permissions = discord.Permissions(
+        send_messages=True,
+        embed_links=True,
+        read_messages=True,
+        read_message_history=True,
+        add_reactions=True,
+    )
+
+    bot_permissions = guild.me.guild_permissions
+
+    missing_perms = []
+    for perm_name, value in required_permissions:
+        if not getattr(bot_permissions, perm_name):
+            missing_perms.append(perm_name)
+
+    if missing_perms:
+        print(f"[AVISO] Bot entrou em {guild.name} sem permissões: {missing_perms}")
+
+        # Verifica hierarquia ANTES de sair
+        bot_role = guild.me.top_role
+        highest_role = max(guild.roles, key=lambda r: r.position)
+        if guild.me != guild.owner and bot_role.position < highest_role.position:
+            print(f"[AVISO] Cargo do bot não está no topo em {guild.name}")
+
+        # Envia mensagem no primeiro canal disponível
+        for channel in guild.text_channels:
+            if channel.permissions_for(guild.me).send_messages:
+                try:
+                    await channel.send(
+                        f"⚠️ Fui adicionado em **{guild.name}**, mas estou sem permissões!\n\n"
+                        f"Faltam: ```{', '.join(missing_perms)}```\n"
+                        f"Por favor, me reconvite com todas as permissões:\n"
+                        f"https://discord.com/oauth2/authorize?client_id={bot.user.id}&scope=bot&permissions=8"
+                    )
+                    break
+                except:
+                    pass
+
+        await guild.leave()
+        print(f"Sai de {guild.name} por falta de permissões")
+
+    else:
+        print(f"[INFO] Bot entrou com sucesso em {guild.name}!")
+
+        # Verifica hierarquia se entrou com permissões OK
+        bot_role = guild.me.top_role
+        highest_role = max(guild.roles, key=lambda r: r.position)
+        if guild.me != guild.owner and bot_role.position < highest_role.position:
+            print(f"[AVISO] Cargo do bot não está no topo em {guild.name}")
+
 
 @bot.event
 async def on_ready():
@@ -28,16 +89,17 @@ async def on_ready():
     Evento chamado quando o bot está conectado e pronto para uso.
     Carrega automaticamente todas as extensões (cogs) da pasta ./cogs.
     """
-    print(f'Bot inicializado: {bot.user}')
+    print(f"Bot inicializado: {bot.user}")
     # Carregar cogs
-    for filename in os.listdir('./cogs'):
-        if filename.endswith('.py') and filename != '__init__.py':
+    for filename in os.listdir("./cogs"):
+        if filename.endswith(".py") and filename != "__init__.py":
             print(f"Tentando carregar: {filename}")
             try:
-                await bot.load_extension(f'cogs.{filename[:-3]}')
+                await bot.load_extension(f"cogs.{filename[:-3]}")
                 print(f"Carregado com sucesso: {filename}")
             except Exception as e:
                 print(f"Erro ao carregar {filename}: {e}")
+
 
 # Verifica se o token do bot está configurado antes de executar
 assert bot_config.TOKEN is not None, "TOKEN não configurado"
