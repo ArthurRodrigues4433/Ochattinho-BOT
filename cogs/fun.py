@@ -16,6 +16,13 @@ class Fun(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.MEMES = [
+            "Por que o computador foi ao médico? Porque tinha um vírus!",
+            "O que o zero disse para o oito? Belo cinto!",
+            "Por que a galinha atravessou a estrada? Para chegar do outro lado!",
+            "O que é um fantasma? Um espírito sem corpo!",
+            "Por que o livro de matemática estava triste? Porque tinha muitos problemas!",
+        ]
 
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -41,14 +48,7 @@ class Fun(commands.Cog):
     @commands.cooldown(1, 15, commands.BucketType.user)
     async def meme(self, ctx):
         """Envia um meme aleatório da lista pré-definida."""
-        memes = [
-            "Por que o computador foi ao médico? Porque tinha um vírus!",
-            "O que o zero disse para o oito? Belo cinto!",
-            "Por que a galinha atravessou a estrada? Para chegar do outro lado!",
-            "O que é um fantasma? Um espírito sem corpo!",
-            "Por que o livro de matemática estava triste? Porque tinha muitos problemas!",
-        ]
-        meme = random.choice(memes)
+        meme = random.choice(self.MEMES)
         await ctx.send(f"😂 {meme}")
 
 

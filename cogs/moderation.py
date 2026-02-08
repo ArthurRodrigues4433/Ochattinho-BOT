@@ -17,6 +17,7 @@ class Mod(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.CONVERSAO = {"m": 1, "h": 60, "d": 1440}
 
     # FUNÇÃO PARA BANIR UM USUARIO
     @commands.command()
@@ -46,16 +47,12 @@ class Mod(commands.Cog):
     @commands.command()
     @commands.has_permissions(moderate_members=True)
     async def mute(self, ctx, member: discord.Member, duration: int, unit: str):
-        """Silencia um membro por um período especificado (m: minutos, h: horas, d: dias)."""
-        # Converte a unidade para timedelta
-        if unit.lower() == "m":
-            delta = timedelta(minutes=duration)
-        elif unit.lower() == "h":
-            delta = timedelta(hours=duration)
-        elif unit.lower() == "d":
-            delta = timedelta(days=duration)
+        """Silencia um membro por um período específico. Ex: oc!mute @user 10 m (10 minutos)"""
+        multiplicador = self.CONVERSAO.get(unit.lower())
+        if multiplicador:
+            delta = timedelta(minutes=duration * multiplicador)
         else:
-            await ctx.send("Unidade inválida. Use m (minutos), h (horas) ou d (dias).")
+            await ctx.send("Unidade inválida. Use m, h ou d.")
             return
         await member.timeout(delta)
         await ctx.send(f"{member} foi silenciado por {duration}{unit}.")

@@ -22,6 +22,13 @@ def get_prefix(bot, message):
     return settings.PREFIXES.get(message.guild.id if message.guild else None, "oc!")
 
 
+def encontrar_canal_disponivel(guild):
+    for channel in guild.text_channels:
+        if channel.permissions_for(guild.me).send_messages:
+            return channel
+    return None
+
+
 # Inicialização do bot com prefixo dinâmico e todas as intents habilitadas
 bot = commands.Bot(command_prefix=get_prefix, intents=discord.Intents.all())
 bot.remove_command(
@@ -32,6 +39,8 @@ bot.remove_command(
 @bot.event
 async def on_guild_join(guild):
     """Evento chamado quando o bot entra em um servidor."""
+    canal = encontrar_canal_disponivel(guild)
+
     required_permissions = discord.Permissions(
         send_messages=True,
         embed_links=True,
@@ -57,18 +66,16 @@ async def on_guild_join(guild):
             print(f"[AVISO] Cargo do bot não está no topo em {guild.name}")
 
         # Envia mensagem no primeiro canal disponível
-        for channel in guild.text_channels:
-            if channel.permissions_for(guild.me).send_messages:
-                try:
-                    await channel.send(
-                        f"⚠️ Fui adicionado em **{guild.name}**, mas estou sem permissões!\n\n"
-                        f"Faltam: ```{', '.join(missing_perms)}```\n"
-                        f"Por favor, me reconvite com todas as permissões:\n"
-                        f"https://discord.com/oauth2/authorize?client_id={bot.user.id}&scope=bot&permissions=8"
-                    )
-                    break
-                except:
-                    pass
+        if canal:
+            try:
+                await canal.send(
+                    f"⚠️ Olá! Eu sou o **Ochattinho BOT**!\n"
+                    f"Percebi que não tenho as permissões necessárias para funcionar corretamente.\n"
+                    f"Permissões faltando: {', '.join(missing_perms)}\n"
+                    f"Por favor, ajuste minhas permissões e me adicione novamente!"
+                )
+            except:
+                print(f"Não consegui enviar mensagem de aviso em {guild.name}")
 
         await guild.leave()
         print(f"Sai de {guild.name} por falta de permissões")
@@ -76,18 +83,15 @@ async def on_guild_join(guild):
     else:
         print(f"[INFO] Bot entrou com sucesso em {guild.name}!")
 
-        # Envia mensagem de boas-vindas no primeiro canal disponível
-        for channel in guild.text_channels:
-            if channel.permissions_for(guild.me).send_messages:
-                try:
-                    await channel.send(
-                        f"🎉 Olá! Eu sou o **Ochattinho BOT**!\n"
-                        f"Estou pronto para ajudar em **{guild.name}**.\n"
-                        f"Use `oc!ajuda` para ver meus comandos!"
-                    )
-                    break
-                except:
-                    pass
+        if canal:
+            try:
+                await canal.send(
+                    f"🎉 Olá! Eu sou o **Ochattinho BOT**!\n"
+                    f"Estou pronto para ajudar em **{guild.name}**.\n"
+                    f"Use `oc!ajuda` para ver meus comandos!"
+                )
+            except:
+                pass
 
         # Verifica hierarquia se entrou com permissões OK
         bot_role = guild.me.top_role
