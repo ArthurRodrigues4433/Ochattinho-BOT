@@ -4,6 +4,26 @@
 
 Um bot Discord multifuncional escrito em Python usando discord.py, com comandos de diversão, moderação, administração, música e utilitários.
 
+## Deploy
+
+O bot está hospedado no **fly.io** e faz deploy automático via GitHub Actions.
+
+### Status
+- **Produção**: https://ochattinho-bot.fly.dev
+- **Deploy**: Automático ao fazer push na branch `master`
+
+### Deploy Manual
+
+```bash
+# Instalar flyctl
+iwr https://fly.io/install.ps1 -useb | iex
+
+# Login
+flyctl auth login
+
+# Deploy
+flyctl deploy --app ochattinho-bot
+```
 
 ## Funcionalidades
 
@@ -13,7 +33,7 @@ Um bot Discord multifuncional escrito em Python usando discord.py, com comandos 
 - **Música**: Reprodução de músicas do YouTube com fila.
 - **Utilitários**: Info de servidor, usuário, canal, bot, uptime, invite.
 
-## Instalação
+## Instalação Local
 
 1. Clone o repositório:
    ```bash
@@ -38,54 +58,54 @@ Um bot Discord multifuncional escrito em Python usando discord.py, com comandos 
 
 ## Configuração
 
-- O bot usa prefixo dinâmico por servidor (padrão: `!`).
+- O bot usa prefixo dinâmico por servidor (padrão: `oc!`).
 - Configurações são salvas em `settings.json`.
 - Logs são gravados no console e em arquivos para ações admin.
 
 ## Comandos
 
 ### Diversão
-- `!ping` - Responde com Pong!
-- `!dice` - Rola um dado (1-6)
-- `!coinflip` - Cara ou coroa
-- `!meme` - Piada aleatória
+- `oc!ping` - Responde com Pong!
+- `oc!dice` - Rola um dado (1-6)
+- `oc!coinflip` - Cara ou coroa
+- `oc!meme` - Piada aleatória
 
 ### Utilitários
-- `!serverinfo` - Info do servidor
-- `!userinfo [@user]` - Info do usuário
-- `!avatar [@user]` - Avatar do usuário
-- `!roleinfo @role` - Info da role
-- `!channelinfo` - Info do canal
-- `!botinfo` - Info do bot
-- `!uptime` - Tempo online
-- `!invite` - Link de convite
-- `!ajuda` - Lista de comandos
+- `oc!serverinfo` - Info do servidor
+- `oc!userinfo [@user]` - Info do usuário
+- `oc!avatar [@user]` - Avatar do usuário
+- `oc!roleinfo @role` - Info da role
+- `oc!channelinfo` - Info do canal
+- `oc!botinfo` - Info do bot
+- `oc!uptime` - Tempo online
+- `oc!invite` - Link de convite
+- `oc!ajuda` - Lista de comandos
 
 ### Moderação (Requer permissões)
-- `!ban @user [reason]` - Bane usuário
-- `!kick @user [reason]` - Expulsa usuário
-- `!mute @user duration unit` - Silencia usuário
-- `!unmute @user` - Remove silêncio
-- `!clear amount` - Limpa mensagens
-- `!warn @user [reason]` - Adverte usuário
+- `oc!ban @user [reason]` - Bane usuário
+- `oc!kick @user [reason]` - Expulsa usuário
+- `oc!mute @user duration unit` - Silencia usuário
+- `oc!unmute @user` - Remove silêncio
+- `oc!clear amount` - Limpa mensagens
+- `oc!warn @user [reason]` - Adverte usuário
 
 ### Administração (Apenas admins)
-- `!setprefix <prefix>` - Altera prefixo
-- `!setlog #channel` - Define canal de logs
-- `!setmodrole @role` - Define role de mod
-- `!reload <cog>` - Recarrega cog
-- `!shutdown` - Desliga bot
+- `oc!setprefix <prefix>` - Altera prefixo
+- `oc!setlog #channel` - Define canal de logs
+- `oc!setmodrole @role` - Define role de mod
+- `oc!reload <cog>` - Recarrega cog
+- `oc!shutdown` - Desliga bot
 
 ### Música
-- `!join` - Entra no canal de voz
-- `!leave` - Sai do canal
-- `!play <query>` - Toca música
-- `!skip` - Pula música
-- `!pause` - Pausa
-- `!resume` - Retoma
-- `!queue` - Mostra fila
-- `!volume <0-100>` - Ajusta volume
-- `!stop` - Para e limpa fila
+- `oc!join` - Entra no canal de voz
+- `oc!leave` - Sai do canal
+- `oc!play <query>` - Toca música
+- `oc!skip` - Pula música
+- `oc!pause` - Pausa
+- `oc!resume` - Retoma
+- `oc!queue` - Mostra fila
+- `oc!volume <0-100>` - Ajusta volume
+- `oc!stop` - Para e limpa fila
 
 ## Segurança
 
@@ -93,7 +113,7 @@ Um bot Discord multifuncional escrito em Python usando discord.py, com comandos 
 - Validação de entradas (ex: limite de 200 chars em queries de música).
 - Logs de ações administrativas.
 - Tratamento seguro de erros (não expõe stack traces).
-- Token armazenado em `.env`.
+- Token armazenado em variável de ambiente ou secrets.
 
 ## Estrutura do Projeto
 
@@ -107,8 +127,10 @@ Um bot Discord multifuncional escrito em Python usando discord.py, com comandos 
   - `music.py` - Comandos de música
   - `utils.py` - Comandos utilitários
 - `test_settings.py` - Testes básicos
-- `.env` - Variáveis de ambiente
+- `.env` - Variáveis de ambiente (não commitado)
 - `settings.json` - Configurações salvas
+- `fly.toml` - Configuração do fly.io
+- `Dockerfile` - Container Docker
 
 ## Contribuição
 
@@ -116,4 +138,4 @@ Sinta-se à vontade para contribuir com issues ou pull requests.
 
 ## Licença
 
-Este projeto é open-source. Use por sua conta e risco.
+Este projeto é open-source. Fique a vontade para contribuir.
