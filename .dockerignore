@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.Pythonenv*
+.env
+.venv
+env
+venv
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Fly.io
+fly.toml
+
+# Testes
+test_*.py
+*_test.py
+
+# Outros
+*.log
+.DS_Store
